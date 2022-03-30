@@ -17,7 +17,6 @@ client.slashCommands = new Discord.Collection();
 client.Functions = require("./Functions/index.js")
 
 // Requiring Configs and Handlers
-client.tst = require("./Functions/test")(client)
 client.config = require("./config");
 require('dotenv').config()
 require("./Handlers/slash.js")(client)
@@ -72,6 +71,17 @@ client.on("messageCreate", async message => {
       }
     }
 })
+
+// SourceCode
+client.on("messageCreate", async message =>{
+  if (message.content.startsWith(client.config.Prefix + "sourceCode")) {
+    let embe = new Discord.MessageEmbed()
+    .setTitle("Source Code")
+    .setDescription("[Link to the Source Code](https://github.com/Xeinostorm/Music-Discord-Bot)")
+    .setColor("GREEN")
+    message.channel.send({embeds: [embe]})
+  }
+});
 
 
 // Login To BOT

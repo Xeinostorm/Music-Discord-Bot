@@ -4,27 +4,45 @@ module.exports = {
     name: "help",
     description: "Shows bot commands.",
     permissions: "NONE",
-    onlyguild: false,
+    onlyguild: true,
+    options: [{
+        name: "command",
+        description: "Shows help menu for specific command",
+        type: 3,
+        required: false,
+    }],
     run: async(client, interaction, args) =>{
-        let ContentNmae;
-        let Content;
+        const data = [];
+		const commands = interaction.client.slashCommands;
 
+		if (!args.length) {
+            data.push('Here\'s a list of all my commands: ');
+            data.push(commands.map(command => command.name).join(', '));
+            const user = client.users.cache.get(interaction.member.user.id);
 
-        const commands = client.slashCommands()
-        
-        const Reply = new MessageEmbed()
-        .setTitle("Name")
-        .setDescription(`${ContentNmae} ${Content}`)
+            return user.send(`${data}`, { split: true })
+                .then(() => {
+                    if (interaction.channel.type === 'dm') return;
+                    interaction.followUp('I\'ve sent you a DM with all my commands!');
+                })
+                .catch(error => {
+                    console.error(`Could not send help DM to ${interaction.member.user.tag}.\n`, error);
+                    interaction.followUp('it seems like I can\'t DM you! Do you have DMs disabled?');
+                });
+        }else{
+            const name = interaction.options.getString("command")
+            const command = commands.get(name);
 
-        try{
-            ContentNmae = "Error: ";
-            Content = "This command isn't done";
-        }catch(err){
-            ContentNmae = "Error: ";
-            Content = err;
+            if (!command) {
+                return interaction.followUp('that\'s not a valid command!');
+            }
+
+            data.push(`**Name:** ${command.name}`);
+
+            if (command.description) data.push(`**Description:** ${command.description}`);
+
+            interaction.followUp(`${data}`, { split: true });
         }
-
-        interaction.followup({embeds: [Reply]})
 
     }
 }

@@ -18,6 +18,35 @@ module.exports = async (client, interaction) => {
               });
           } else if (option.value) args.push(option.value);
       }
+      try{
+        if(cmd.onlyguild == true){
+          if(!interaction.guild) return interaction.followUp({content: "You can't use this command here!"});
+        }
+        if (client.config.Option.Role.enabled == true && client.config.Option.Role.commands.includes(interaction.commandName)) {
+          const roleDJ = interaction.guild.roles.cache.find(x => x.name === client.config.Option.Role.RoleID);
+          if(roleDJ) return interaction.followUp({content: `Couldn't find ${client.config.Option.Role.RoleName} role! This command is set only for those with the ${client.config.Option.Role.RoleName} role. ❌`})
+  
+          if (!interaction.member.roles.cache.has(client.config.Option.Role.RoleID)) {
+            return interaction.followUp({ content: `This command is set only for those with the ${client.config.Option.Role.RoleName} role. ❌` });
+          }
+        }
+        if(cmd.permissions !== "" && cmd.permissions !== null && cmd.permissions !== "NONE"){
+          if(cmd.permissions == "OWNER"){
+
+          }else if(cmd.permissions == "SERVER_OWNER"){
+
+          }else if(cmd.permissions.includes(["ADMINISTRATOR"])){
+
+          }else{
+            interaction.followUp({content: "Couldn't find that permission"})
+            return;
+          }
+          
+        }
+      }catch(err){
+        console.log(err)
+        return;
+      }
       interaction.member = interaction.guild.members.cache.get(interaction.user.id);
 
       

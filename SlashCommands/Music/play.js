@@ -18,7 +18,6 @@ module.exports = {
         required: false,
     }],
     run: async(client, interaction, args) =>{
-        client.tst
 
         // IMPORTANT
         let ERROR_IMPUT;
@@ -30,7 +29,6 @@ module.exports = {
 
         const ERROR = new MessageEmbed()
         .setTitle("Play")
-        .setDescription(`Error: ${ERROR_IMPUT}`)
         .setColor("RANDOM")
 
         if(Title == null || Title == ""){
@@ -47,6 +45,7 @@ module.exports = {
 
         if (!interaction.member.voice.channel){
             ERROR_IMPUT = "Please join a voice channel first!"
+            ERROR.setDescription(`Error: ${ERROR_IMPUT}`)
             client.Functions.sleep(100)
             interaction.followUp({embeds: [ERROR]})
             return;
@@ -59,6 +58,7 @@ module.exports = {
 
         if (!res || !res.tracks.length) {
             ERROR_IMPUT = `${interaction.author}, No results found! ❌`
+            ERROR.setDescription(`Error: ${ERROR_IMPUT}`)
             client.Functions.sleep(100)
             interaction.followUp({embeds: [ERROR]})
             return;
@@ -73,6 +73,7 @@ module.exports = {
         } catch {
             await client.player.deleteQueue(interaction.guild.id);
             ERROR_IMPUT = `${interaction.author}, I can't join audio channel. ❌`
+            ERROR.setDescription(`Error: ${ERROR_IMPUT}`)
             client.Functions.sleep(100)
             interaction.followUp({embeds: [ERROR]})
             return;

@@ -7,6 +7,7 @@ module.exports = {
     name: "eval",
     description: "owner's only",
     permission:"OWNER", // CHECK IF THE USE HAS PERMISSION
+    onlyguild: true,
     options: [{
         name: "script",
         description: "type a code to execute",
