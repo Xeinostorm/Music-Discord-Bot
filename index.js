@@ -17,11 +17,14 @@ client.slashCommands = new Discord.Collection();
 client.Functions = require("./Functions/sleep.js")
 
 // Requiring Configs and Handlers
-client.config = require("./config.js");
+client.config = require("./config");
 require('dotenv').config()
 require("./Handlers/slash.js")(client)
 require("./Handlers/events.js")(client)
 
+// Player Data
+client.player = new Player(client, client.config.Option.discordPlayer);
+const player = client.player
 
 // Error Handling
 process.on('unhandledRejection', error => {
@@ -30,7 +33,7 @@ process.on('unhandledRejection', error => {
 
 
 player.on('trackStart', (queue, track) => {
-  if (!client.config.opt.loopMessage && queue.repeatMode !== 0) return;
+  if (!client.config.Option.loopMessage && queue.repeatMode !== 0) return;
   queue.metadata.send({ content: `🎵 Music started playing: **${track.title}** -> Channel: **${queue.connection.channel.name}** 🎧` });
 });
 

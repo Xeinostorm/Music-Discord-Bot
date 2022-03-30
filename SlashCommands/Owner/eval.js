@@ -11,7 +11,7 @@ module.exports = {
         name: "script",
         description: "type a code to execute",
         type: 3,
-        required: false
+        required: true
     }],
     run: async (client, interaction, args) => {
         const nembed = new MessageEmbed()

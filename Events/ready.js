@@ -1,8 +1,9 @@
 const Discord = require('discord.js');
 const moment = require('moment');
-const config = client.config
 
 module.exports = client => {
+  const config = client.config
+  
   console.log(`${moment().format("hh:mma DD/MM/YYYY")} | Logged in as ${client.user.tag}.`);
   console.log(`${moment().format("hh:mma DD/MM/YYYY")} | Bot is inside ${client.guilds.cache.size} servers and Serves ${client.users.cache.set.length} user/s.`);
   console.log(`${moment().format("hh:mma DD/MM/YYYY")} |`)

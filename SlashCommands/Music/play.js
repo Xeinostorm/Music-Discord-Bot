@@ -20,7 +20,7 @@ module.exports = {
     run: async(client, interaction, args) =>{
 
         // IMPORTANT
-        let ERROR_IMPUT = "";
+        const ERROR_IMPUT = [];
         const Search = [];
         const Title = interaction.options.getString("title");
         const URL = interaction.options.getString("url");
@@ -29,14 +29,14 @@ module.exports = {
 
         const ERROR = new MessageEmbed()
         .setTitle("Play")
-        .setDescription({content: "Error: "+ERROR_IMPUT})
+        .setDescription("Error: "+ERROR_IMPUT)
         .setColor("RANDOM")
 
         if(Title == null || Title == ""){
             if(URL !== null || URL !== ""){
                 Search.push(URL)
             }else if (URL == null || URL == ""){
-                ERROR_IMPUT = `${interaction.author}, Write the name of the music you want to search. ❌`
+                ERROR_IMPUT.push(`${interaction.author}, Write the name of the music you want to search. ❌`) 
                 interaction.followUp({embeds: [ERROR]})
             }
         }else if(Title !== null || Title !== ""){
@@ -44,7 +44,7 @@ module.exports = {
         }
 
         if (!interaction.member.voice.channel){
-            ERROR_IMPUT = "Please join a voice channel first!";
+            ERROR_IMPUT.push("Please join a voice channel first!");
             interaction.followUp({embeds: [ERROR]})
             return;
         }
@@ -55,7 +55,7 @@ module.exports = {
         });
 
         if (!res || !res.tracks.length) {
-            ERROR_IMPUT = `${interaction.author}, No results found! ❌`
+            ERROR_IMPUT.push( `${interaction.author}, No results found! ❌`)
             interaction.followUp({embeds: [ERROR]})
             return;
         }
