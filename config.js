@@ -4,7 +4,7 @@ module.exports = {
     Option: {
         Role: {
             enabled: true,
-            roleName: 'Music', 
+            RoleID: '958735188140122122', 
             commands: ['back', 'clear', 'filter', 'loop', 'pause', 'resume', 'skip', 'stop', 'volume']
         },
         selfDeaf: false, 

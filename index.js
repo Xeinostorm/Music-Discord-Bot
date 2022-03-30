@@ -14,9 +14,10 @@ client.aliases = new Discord.Collection();
 client.slashCommands = new Discord.Collection();
 
 // Functions
-client.Functions = require("./Functions/sleep.js")
+client.Functions = require("./Functions/index.js")
 
 // Requiring Configs and Handlers
+client.tst = require("./Functions/test")(client)
 client.config = require("./config");
 require('dotenv').config()
 require("./Handlers/slash.js")(client)

@@ -19,15 +19,7 @@ module.exports = async (client, interaction) => {
           } else if (option.value) args.push(option.value);
       }
       interaction.member = interaction.guild.members.cache.get(interaction.user.id);
-      
-      if (cmd && client.config.Option.Role.enabled && client.config.Option.Role.commands.includes(cmd.name)) {
-        const roleDJ = interaction.guild.roles.cache.find(x => x.name === client.config.Option.Role.roleName);
-        if(roleDJ) return interaction.followUp({content: `${interaction.author}, Couldn't find ${client.config.Option.Role.roleName} role! This command is set only for those with the ${client.config.Option.Role.roleName} role. ❌`})
 
-        if (!interaction.member.roles.cache.has(roleDJ.id)) {
-          return interaction.followup({ content: `${interaction.author}, This command is set only for those with the ${client.config.Option.Role.roleName} role. ❌` });
-        }
-      }
       
       try{
         cmd.run(client, interaction, args);    
@@ -43,6 +35,7 @@ module.exports = async (client, interaction) => {
   if (interaction.isContextMenu()) {
       await interaction.deferReply({ ephemeral: true });
       const command = client.slashCommands.get(interaction.commandName);
+
       try{
         if (command) command.run(client, interaction);
       }

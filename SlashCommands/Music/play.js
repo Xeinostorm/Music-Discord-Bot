@@ -18,9 +18,10 @@ module.exports = {
         required: false,
     }],
     run: async(client, interaction, args) =>{
+        client.tst
 
         // IMPORTANT
-        const ERROR_IMPUT = [];
+        let ERROR_IMPUT;
         const Search = [];
         const Title = interaction.options.getString("title");
         const URL = interaction.options.getString("url");
@@ -29,14 +30,15 @@ module.exports = {
 
         const ERROR = new MessageEmbed()
         .setTitle("Play")
-        .setDescription("Error: "+ERROR_IMPUT)
+        .setDescription(`Error: ${ERROR_IMPUT}`)
         .setColor("RANDOM")
 
         if(Title == null || Title == ""){
             if(URL !== null || URL !== ""){
                 Search.push(URL)
             }else if (URL == null || URL == ""){
-                ERROR_IMPUT.push(`${interaction.author}, Write the name of the music you want to search. ❌`) 
+                ERROR_IMPUT = `${interaction.author}, Write the name of the music you want to search. ❌`
+                client.Functions.sleep(100)
                 interaction.followUp({embeds: [ERROR]})
             }
         }else if(Title !== null || Title !== ""){
@@ -44,7 +46,8 @@ module.exports = {
         }
 
         if (!interaction.member.voice.channel){
-            ERROR_IMPUT.push("Please join a voice channel first!");
+            ERROR_IMPUT = "Please join a voice channel first!"
+            client.Functions.sleep(100)
             interaction.followUp({embeds: [ERROR]})
             return;
         }
@@ -55,7 +58,8 @@ module.exports = {
         });
 
         if (!res || !res.tracks.length) {
-            ERROR_IMPUT.push( `${interaction.author}, No results found! ❌`)
+            ERROR_IMPUT = `${interaction.author}, No results found! ❌`
+            client.Functions.sleep(100)
             interaction.followUp({embeds: [ERROR]})
             return;
         }
@@ -69,6 +73,7 @@ module.exports = {
         } catch {
             await client.player.deleteQueue(interaction.guild.id);
             ERROR_IMPUT = `${interaction.author}, I can't join audio channel. ❌`
+            client.Functions.sleep(100)
             interaction.followUp({embeds: [ERROR]})
             return;
         }
@@ -83,8 +88,8 @@ module.exports = {
                guildId: channel.guild.id,
                adapterCreator: channel.guild.voiceAdapterCreator,
                selfDeaf: false
-                });
-            }
+            });
+        }
             
         res.playlist ? queue.addTracks(res.tracks) : queue.addTrack(res.tracks[0]);
 
