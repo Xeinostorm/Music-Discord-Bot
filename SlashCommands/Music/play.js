@@ -1,11 +1,6 @@
 const { QueryType } = require("discord-player");
 const {MessageEmbed} = require("discord.js")
 
-const { Player } = require("discord-player");
-
-
-
-
 module.exports = {
     name: "play",
     description: "play a song for you!",
@@ -24,10 +19,8 @@ module.exports = {
     }],
     run: async(client, interaction, args) =>{
 
-        const player = new Player(client);
-
         // IMPORTANT
-        let ERROR_IMPUT;
+        let ERROR_IMPUT = "";
         const Search = [];
         const Title = interaction.options.getString("title");
         const URL = interaction.options.getString("url");
@@ -36,16 +29,14 @@ module.exports = {
 
         const ERROR = new MessageEmbed()
         .setTitle("Play")
-        .setDescription("Error: "+ERROR_IMPUT)
+        .setDescription({content: "Error: "+ERROR_IMPUT})
         .setColor("RANDOM")
-
-        
 
         if(Title == null || Title == ""){
             if(URL !== null || URL !== ""){
                 Search.push(URL)
             }else if (URL == null || URL == ""){
-                ERROR_IMPUT = "You can't search for nothing!"
+                ERROR_IMPUT = `${interaction.author}, Write the name of the music you want to search. ❌`
                 interaction.followUp({embeds: [ERROR]})
             }
         }else if(Title !== null || Title !== ""){
@@ -55,33 +46,50 @@ module.exports = {
         if (!interaction.member.voice.channel){
             ERROR_IMPUT = "Please join a voice channel first!";
             interaction.followUp({embeds: [ERROR]})
-            return
+            return;
         }
 
-        const searchResult = await player.search(Search, {
-            requestedBy: interaction.user,
-            searchEngine: QueryType.AUTO,
+        const res = await client.player.search(args.join(' '), {
+            requestedBy: interaction.member,
+            searchEngine: QueryType.AUTO
         });
 
-        if(!searchResult){
-            ERROR_IMPUT.push("Couldn't find that song!")
+        if (!res || !res.tracks.length) {
+            ERROR_IMPUT = `${interaction.author}, No results found! ❌`
             interaction.followUp({embeds: [ERROR]})
-            return
+            return;
         }
 
-        const queue = await player.createQueue(interaction.guild, {
-            metadata: interaction.channel,
+        const queue = await client.player.createQueue(interaction.guild, {
+            metadata: interaction.channel
         });
 
-        if (!queue.connection)
-            await queue.connect(interaction.member.voice.channel);
+        try {
+            if (!queue.connection) await queue.connect(interaction.member.voice.channel)
+        } catch {
+            await client.player.deleteQueue(interaction.guild.id);
+            ERROR_IMPUT = `${interaction.author}, I can't join audio channel. ❌`
+            interaction.followUp({embeds: [ERROR]})
+            return;
+        }
 
-        interaction.followUp({ content: `Playing ${searchResult}` });
+        await interaction.followUp({ content: `Your ${res.playlist ? 'Playlist' : 'Track'} Loading... 🎧` });
 
-        searchResult.playlist
-            ? queue.addTracks(searchResult.tracks)
-            : queue.addTrack(searchResult.tracks[0]);
+        if(client.config.Option.selfDeaf === false) {
+            let channel = interaction.member.voice.channel;
+            const { joinVoiceChannel } = require('@discordjs/voice');
+            const connection = joinVoiceChannel({
+               channelId: channel.id,
+               guildId: channel.guild.id,
+               adapterCreator: channel.guild.voiceAdapterCreator,
+               selfDeaf: false
+                });
+            }
+            
+        res.playlist ? queue.addTracks(res.tracks) : queue.addTrack(res.tracks[0]);
 
         if (!queue.playing) await queue.play();
+
+
     }
 } 
