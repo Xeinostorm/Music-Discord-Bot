@@ -10,7 +10,7 @@ module.exports = {
         },
         selfDeaf: false, 
         maxVol: 100,
-        loopMessage: false, 
+        loopMessage: true, 
         discordPlayer: {
             ytdlOptions: {
                 quality: 'highestaudio',

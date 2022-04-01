@@ -32,10 +32,17 @@ module.exports = async (client, interaction) => {
         }
         if(cmd.permissions !== "" && cmd.permissions !== null && cmd.permissions !== "NONE"){
           if(cmd.permissions == "OWNER"){
-
+            if(client.config.OwonerID.includes(interaction.user.id)){
+              interaction.followUp({content:"You can't use this command! Only bot's owner can use this command!"})
+              return;
+            }
           }else if(cmd.permissions == "SERVER_OWNER"){
-
-          }else if(cmd.permissions.includes(["ADMINISTRATOR"])){
+            let owner = await interaction.guild.fetchOwner()
+            if(owner.id == interaction.user.id){
+              interaction.followUp({content:"You can't use this command! Only server's owner can use this command!"})
+              return;
+            }
+          }else if(cmd.permissions.includes(client.config.Permissions)){
 
           }else{
             interaction.followUp({content: "Couldn't find that permission"})
